@@ -581,13 +581,12 @@ class UserService {
             SetupSRPResponse.fromJson(response.data);
         final serverB =
             SRP6Util.decodeBigInt(base64Decode(setupSRPResponse.srpB));
-        // ignore: need to calculate secret to get M1, unused_local_variable
+        // ignore: unused_local_variable
         final clientS = client.calculateSecret(serverB);
         final clientM = client.calculateClientEvidenceMessage();
 
-        late Response _;
         if (setKeysRequest == null) {
-          _ = await _enteDio.post(
+          await _enteDio.post(
             "/users/srp/complete",
             data: {
               'setupID': setupSRPResponse.setupID,
@@ -595,7 +594,7 @@ class UserService {
             },
           );
         } else {
-          _ = await _enteDio.post(
+          await _enteDio.post(
             "/users/srp/update",
             data: {
               'setupID': setupSRPResponse.setupID,
@@ -667,7 +666,8 @@ class UserService {
     final String srpB = createSessionResponse.data["srpB"];
 
     final serverB = SRP6Util.decodeBigInt(base64Decode(srpB));
-    // ignore: need to calculate secret to get M1, unused_local_variable
+
+    // ignore: unused_local_variable
     final clientS = client.calculateSecret(serverB);
     final clientM = client.calculateClientEvidenceMessage();
     final response = await _dio.post(

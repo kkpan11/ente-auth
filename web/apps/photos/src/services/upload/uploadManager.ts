@@ -1,13 +1,13 @@
 import { createComlinkCryptoWorker } from "@/base/crypto";
 import { type CryptoWorker } from "@/base/crypto/worker";
-import { ensureElectron } from "@/base/electron";
 import { lowercaseExtension, nameAndExtension } from "@/base/file";
 import log from "@/base/log";
 import type { Electron } from "@/base/types/ipc";
 import { ComlinkWorker } from "@/base/worker/comlink-worker";
+import type { Collection } from "@/media/collection";
 import { FileType } from "@/media/file-type";
 import { potentialFileTypeFromExtension } from "@/media/live-photo";
-import { getLocalFiles } from "@/new/photos/services/files";
+import { getLocalFiles, sortFiles } from "@/new/photos/services/files";
 import { indexNewUpload } from "@/new/photos/services/ml";
 import type { UploadItem } from "@/new/photos/services/upload/types";
 import {
@@ -27,15 +27,19 @@ import {
 } from "services/publicCollectionService";
 import { getDisableCFUploadProxyFlag } from "services/userService";
 import watcher from "services/watch";
-import { Collection } from "types/collection";
 import { SetFiles } from "types/gallery";
-import { decryptFile, getUserOwnedFiles, sortFiles } from "utils/file";
+import { decryptFile, getUserOwnedFiles } from "utils/file";
 import {
     getMetadataJSONMapKeyForJSON,
     tryParseTakeoutMetadataJSON,
     type ParsedMetadataJSON,
 } from "./takeout";
-import UploadService, { uploadItemFileName, uploader } from "./uploadService";
+import UploadService, {
+    areLivePhotoAssets,
+    uploadItemFileName,
+    uploader,
+    type PotentialLivePhotoAsset,
+} from "./upload-service";
 
 export type FileID = number;
 
@@ -424,7 +428,10 @@ class UploadManager {
             }
 
             if (mediaItems.length) {
-                const clusteredMediaItems = await clusterLivePhotos(mediaItems);
+                const clusteredMediaItems = await clusterLivePhotos(
+                    mediaItems,
+                    this.parsedMetadataJSONMap,
+                );
 
                 this.abortIfCancelled();
 
@@ -835,6 +842,7 @@ const markUploaded = async (electron: Electron, item: ClusteredUploadItem) => {
  */
 const clusterLivePhotos = async (
     items: UploadItemWithCollectionIDAndName[],
+    parsedMetadataJSONMap: Map<string, ParsedMetadataJSON>,
 ) => {
     const result: ClusteredUploadItem[] = [];
     items
@@ -862,7 +870,7 @@ const clusterLivePhotos = async (
             collectionID: g.collectionID,
             uploadItem: g.uploadItem,
         };
-        if (await areLivePhotoAssets(fa, ga)) {
+        if (await areLivePhotoAssets(fa, ga, parsedMetadataJSONMap)) {
             const [image, video] =
                 fFileType == FileType.image ? [f, g] : [g, f];
             result.push({
@@ -891,103 +899,6 @@ const clusterLivePhotos = async (
         });
     }
     return result;
-};
-
-interface PotentialLivePhotoAsset {
-    fileName: string;
-    fileType: FileType;
-    collectionID: number;
-    uploadItem: UploadItem;
-}
-
-const areLivePhotoAssets = async (
-    f: PotentialLivePhotoAsset,
-    g: PotentialLivePhotoAsset,
-) => {
-    if (f.collectionID != g.collectionID) return false;
-
-    const [fName, fExt] = nameAndExtension(f.fileName);
-    const [gName, gExt] = nameAndExtension(g.fileName);
-
-    let fPrunedName: string;
-    let gPrunedName: string;
-    if (f.fileType == FileType.image && g.fileType == FileType.video) {
-        fPrunedName = removePotentialLivePhotoSuffix(
-            fName,
-            // A Google Live Photo image file can have video extension appended
-            // as suffix, so we pass that to removePotentialLivePhotoSuffix to
-            // remove it.
-            //
-            // Example: IMG_20210630_0001.mp4.jpg (Google Live Photo image file)
-            gExt ? `.${gExt}` : undefined,
-        );
-        gPrunedName = removePotentialLivePhotoSuffix(gName);
-    } else if (f.fileType == FileType.video && g.fileType == FileType.image) {
-        fPrunedName = removePotentialLivePhotoSuffix(fName);
-        gPrunedName = removePotentialLivePhotoSuffix(
-            gName,
-            fExt ? `.${fExt}` : undefined,
-        );
-    } else {
-        return false;
-    }
-
-    if (fPrunedName != gPrunedName) return false;
-
-    // Also check that the size of an individual Live Photo asset is less than
-    // an (arbitrary) limit. This should be true in practice as the videos for a
-    // live photo are a few seconds long. Further on, the zipping library that
-    // we use doesn't support stream as a input.
-
-    const maxAssetSize = 20 * 1024 * 1024; /* 20MB */
-    const fSize = await uploadItemSize(f.uploadItem);
-    const gSize = await uploadItemSize(g.uploadItem);
-    if (fSize > maxAssetSize || gSize > maxAssetSize) {
-        log.info(
-            `Not classifying files with too large sizes (${fSize} and ${gSize} bytes) as a live photo`,
-        );
-        return false;
-    }
-
-    return true;
-};
-
-const removePotentialLivePhotoSuffix = (name: string, suffix?: string) => {
-    const suffix_3 = "_3";
-
-    // The icloud-photos-downloader library appends _HVEC to the end of the
-    // filename in case of live photos.
-    //
-    // https://github.com/icloud-photos-downloader/icloud_photos_downloader
-    const suffix_hvec = "_HVEC";
-
-    let foundSuffix: string | undefined;
-    if (name.endsWith(suffix_3)) {
-        foundSuffix = suffix_3;
-    } else if (
-        name.endsWith(suffix_hvec) ||
-        name.endsWith(suffix_hvec.toLowerCase())
-    ) {
-        foundSuffix = suffix_hvec;
-    } else if (suffix) {
-        if (name.endsWith(suffix) || name.endsWith(suffix.toLowerCase())) {
-            foundSuffix = suffix;
-        }
-    }
-
-    return foundSuffix ? name.slice(0, foundSuffix.length * -1) : name;
-};
-
-/**
- * Return the size of the given {@link uploadItem}.
- */
-const uploadItemSize = async (uploadItem: UploadItem): Promise<number> => {
-    if (uploadItem instanceof File) return uploadItem.size;
-    if (typeof uploadItem == "string")
-        return ensureElectron().pathOrZipItemSize(uploadItem);
-    if (Array.isArray(uploadItem))
-        return ensureElectron().pathOrZipItemSize(uploadItem);
-    return uploadItem.file.size;
 };
 
 /**

@@ -10,6 +10,7 @@ class TagChip extends StatelessWidget {
   final VoidCallback? onTap;
   final TagChipState state;
   final TagChipAction action;
+  final IconData? iconData;
 
   const TagChip({
     super.key,
@@ -17,11 +18,16 @@ class TagChip extends StatelessWidget {
     this.state = TagChipState.unselected,
     this.action = TagChipAction.none,
     this.onTap,
+    this.iconData,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = getEnteColorScheme(context);
+    final color = state == TagChipState.selected ||
+            Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : colorScheme.tagTextUnselectedColor;
 
     return GestureDetector(
       onTap: onTap,
@@ -47,13 +53,28 @@ class TagChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                color: state == TagChipState.selected ||
-                        Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : colorScheme.tagTextUnselectedColor,
+            MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(1),
+              ),
+              child: Row(
+                children: [
+                  if (iconData != null) ...[
+                    Icon(
+                      iconData,
+                      size: 16,
+                      color: color,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               ),
             ),
             if (state == TagChipState.selected &&
