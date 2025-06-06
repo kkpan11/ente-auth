@@ -5,7 +5,7 @@ import {
     AccountsPageFooter,
     AccountsPageTitle,
 } from "ente-accounts/components/layouts/centered-paper";
-import { recoveryKeyB64FromMnemonic } from "ente-accounts/services/recovery-key";
+import { recoveryKeyFromMnemonic } from "ente-accounts/services/recovery-key";
 import {
     recoverTwoFactor,
     removeTwoFactor,
@@ -13,13 +13,13 @@ import {
 } from "ente-accounts/services/user";
 import { LinkButton } from "ente-base/components/LinkButton";
 import type { MiniDialogAttributes } from "ente-base/components/MiniDialog";
-import { useBaseContext } from "ente-base/context";
-import { decryptBoxB64 } from "ente-base/crypto";
-import type { B64EncryptionResult } from "ente-base/crypto/libsodium";
-import log from "ente-base/log";
-import SingleInputForm, {
+import {
+    SingleInputForm,
     type SingleInputFormProps,
-} from "ente-shared/components/SingleInputForm";
+} from "ente-base/components/SingleInputForm";
+import { useBaseContext } from "ente-base/context";
+import { decryptBox } from "ente-base/crypto";
+import log from "ente-base/log";
 import { ApiError } from "ente-shared/error";
 import { getData, setData, setLSUser } from "ente-shared/storage/localStorage";
 import { t } from "i18next";
@@ -34,8 +34,10 @@ export interface RecoverPageProps {
 const Page: React.FC<RecoverPageProps> = ({ twoFactorType }) => {
     const { logout, showMiniDialog } = useBaseContext();
 
-    const [encryptedTwoFactorSecret, setEncryptedTwoFactorSecret] =
-        useState<Omit<B64EncryptionResult, "key"> | null>(null);
+    const [encryptedTwoFactorSecret, setEncryptedTwoFactorSecret] = useState<{
+        encryptedData: string;
+        nonce: string;
+    } | null>(null);
     const [sessionID, setSessionID] = useState<string | null>(null);
     const [doesHaveEncryptedRecoveryKey, setDoesHaveEncryptedRecoveryKey] =
         useState(false);
@@ -86,15 +88,15 @@ const Page: React.FC<RecoverPageProps> = ({ twoFactorType }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const recover: SingleInputFormProps["callback"] = async (
-        recoveryKey: string,
+    const handleSubmit: SingleInputFormProps["onSubmit"] = async (
+        recoveryKeyMnemonic: string,
         setFieldError,
     ) => {
         try {
             const { encryptedData, nonce } = encryptedTwoFactorSecret!;
-            const twoFactorSecret = await decryptBoxB64(
+            const twoFactorSecret = await decryptBox(
                 { encryptedData, nonce },
-                await recoveryKeyB64FromMnemonic(recoveryKey),
+                await recoveryKeyFromMnemonic(recoveryKeyMnemonic),
             );
             const resp = await removeTwoFactor(
                 sessionID!,
@@ -142,11 +144,10 @@ const Page: React.FC<RecoverPageProps> = ({ twoFactorType }) => {
         <AccountsPageContents>
             <AccountsPageTitle>{t("recover_two_factor")}</AccountsPageTitle>
             <SingleInputForm
-                callback={recover}
-                fieldType="text"
-                placeholder={t("recovery_key")}
-                buttonText={t("recover")}
-                disableAutoComplete
+                autoComplete="off"
+                label={t("recovery_key")}
+                submitButtonTitle={t("recover")}
+                onSubmit={handleSubmit}
             />
             <AccountsPageFooter>
                 <LinkButton onClick={() => showContactSupportDialog()}>
