@@ -1,19 +1,17 @@
+import { ensureLocalUser } from "ente-accounts/services/user";
 import { isDesktop } from "ente-base/app";
 import { assertionFailed } from "ente-base/assert";
-import { decryptBlob, encryptBlobB64 } from "ente-base/crypto";
+import { decryptBlobBytes, encryptBlob } from "ente-base/crypto";
 import type { EncryptedBlob } from "ente-base/crypto/types";
 import { ensureElectron } from "ente-base/electron";
 import { isHTTP4xxError, type PublicAlbumsCredentials } from "ente-base/http";
 import { getKV, getKVB, getKVN, setKV } from "ente-base/kv";
-import { ensureAuthToken, ensureLocalUser } from "ente-base/local-user";
 import log from "ente-base/log";
 import { apiURL } from "ente-base/origins";
+import { ensureAuthToken } from "ente-base/token";
 import { fileLogID, type EnteFile } from "ente-media/file";
-import {
-    filePublicMagicMetadata,
-    updateRemotePublicMagicMetadata,
-} from "ente-media/file-metadata";
 import { FileType } from "ente-media/file-type";
+import { updateFilePublicMagicMetadata } from "ente-new/photos/services/file";
 import {
     getAllLocalFiles,
     getLocalTrashFileIDs,
@@ -23,7 +21,7 @@ import { gunzip, gzip } from "ente-new/photos/utils/gzip";
 import { randomSample } from "ente-utils/array";
 import { ensurePrecondition } from "ente-utils/ensure";
 import { wait } from "ente-utils/promise";
-import { z } from "zod";
+import { z } from "zod/v4";
 import {
     initiateGenerateHLS,
     readVideoStream,
@@ -207,7 +205,7 @@ const updateSnapshotIfNeeded = (
 export const isHLSGenerationSupported = isDesktop;
 
 /**
- * Initialize the video processing subsystem if the user has enabled HLS
+ * Initialize the video processing subsystem unless the user has disabled HLS
  * generation in settings.
  */
 export const initVideoProcessing = async () => {
@@ -224,7 +222,7 @@ export const initVideoProcessing = async () => {
 /**
  * Return the persisted user preference for HLS generation.
  */
-const savedGenerateHLS = () => getKVB("generateHLS");
+const savedGenerateHLS = async () => await getKVB("generateHLS");
 
 /**
  * Update the persisted user preference for HLS generation.
@@ -337,7 +335,7 @@ export const hlsPlaylistDataForFile = async (
 ): Promise<HLSPlaylistDataForFile> => {
     ensurePrecondition(file.metadata.fileType == FileType.video);
 
-    if (filePublicMagicMetadata(file)?.sv == 1) {
+    if (file.pubMagicMetadata?.data.sv == 1) {
         return "skip";
     }
 
@@ -484,7 +482,7 @@ const decryptPlaylistJSON = async (
     encryptedPlaylist: EncryptedBlob,
     file: EnteFile,
 ) => {
-    const decryptedBytes = await decryptBlob(encryptedPlaylist, file.key);
+    const decryptedBytes = await decryptBlobBytes(encryptedPlaylist, file.key);
     const jsonString = await gunzip(decryptedBytes);
     return PlaylistJSON.parse(JSON.parse(jsonString));
 };
@@ -518,10 +516,10 @@ const blobToDataURL = (blob: Blob) =>
  * an array.
  */
 const savedProcessedVideoFileIDs = () =>
-    // [Note: Avoiding zod parsing overhead for DB arrays]
+    // [Note: Avoiding Zod parsing overhead for DB arrays]
     //
     // Validating that the value we read from the DB is indeed the same as the
-    // type we expect can be done using zod, but for potentially very large
+    // type we expect can be done using Zod, but for potentially very large
     // arrays, this has an overhead that is perhaps not justified when dealing
     // with DB entries we ourselves wrote.
     //
@@ -537,7 +535,7 @@ const savedProcessedVideoFileIDs = () =>
  * @see also {@link savedProcessedVideoFileIDs}.
  */
 const savedFailedVideoFileIDs = () =>
-    // See: [Note: Avoiding zod parsing overhead for DB arrays]
+    // See: [Note: Avoiding Zod parsing overhead for DB arrays]
     getKV("videoPreviewFailedFileIDs").then((v) => new Set(v as number[]));
 
 /**
@@ -732,7 +730,7 @@ export const processVideoNewUpload = (
 ) => {
     if (!isHLSGenerationSupported) return;
     if (!isHLSGenerationEnabled()) return;
-    if (file.metadata.fileType !== FileType.video) return;
+    if (file.metadata.fileType != FileType.video) return;
     if (processableUploadItem instanceof File) {
         // While the types don't guarantee it, we really shouldn't be getting
         // here. The only time a processableUploadItem can be File when we're
@@ -902,7 +900,7 @@ const backfillQueue = async (
                 // Not in trash.
                 !localTrashFileIDs.has(f.id) &&
                 // See: [Note: Marking files which do not need video processing]
-                filePublicMagicMetadata(f)?.sv != 1,
+                f.pubMagicMetadata?.data.sv != 1,
         ),
     );
 
@@ -1039,7 +1037,7 @@ const processQueueItem = async ({
     if (!res) {
         log.info(`Generate HLS for ${fileLogID(file)} | not-required`);
         // See: [Note: Marking files which do not need video processing]
-        await updateRemotePublicMagicMetadata(file, { sv: 1 });
+        await updateFilePublicMagicMetadata(file, { sv: 1 });
         return;
     }
 
@@ -1056,7 +1054,7 @@ const processQueueItem = async ({
             size: videoSize,
         });
 
-        const encryptedPlaylist = await encryptBlobB64(playlistData, file.key);
+        const encryptedPlaylist = await encryptBlob(playlistData, file.key);
 
         try {
             await putVideoData(

@@ -22,17 +22,19 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m6(albumName) => "Úspěšně přidáno do  ${albumName}";
 
-  static String m46(expiryTime) => "Platnost odkazu vyprší ${expiryTime}";
+  static String m47(expiryTime) => "Platnost odkazu vyprší ${expiryTime}";
 
-  static String m67(storeName) => "Ohodnoťte nás na ${storeName}";
+  static String m68(storeName) => "Ohodnoťte nás na ${storeName}";
 
-  static String m74(endDate) => "Předplatné se obnoví ${endDate}";
+  static String m75(endDate) => "Předplatné se obnoví ${endDate}";
 
-  static String m80(name) => "Selfie s ${name}";
+  static String m82(name) => "Selfie s ${name}";
 
-  static String m109(email) => "Ověřit ${email}";
+  static String m111(email) => "Ověřit ${email}";
 
-  static String m114(name) => "Vy a ${name}";
+  static String m115(name) => "Wish \$${name} a happy birthday! 🎉";
+
+  static String m117(name) => "Vy a ${name}";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -289,7 +291,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "leaveAlbum": MessageLookupByLibrary.simpleMessage("Opustit album"),
         "left": MessageLookupByLibrary.simpleMessage("Doleva"),
         "lightTheme": MessageLookupByLibrary.simpleMessage("Světlý"),
-        "linkExpiresOn": m46,
+        "linkExpiresOn": m47,
         "linkHasExpired":
             MessageLookupByLibrary.simpleMessage("Platnost odkazu vypršela"),
         "linkNeverExpires": MessageLookupByLibrary.simpleMessage("Nikdy"),
@@ -385,7 +387,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "queued": MessageLookupByLibrary.simpleMessage("Ve frontě"),
         "radius": MessageLookupByLibrary.simpleMessage("Rádius"),
         "rateUs": MessageLookupByLibrary.simpleMessage("Ohodnoť nás"),
-        "rateUsOnStore": m67,
+        "rateUsOnStore": m68,
         "recoverButton": MessageLookupByLibrary.simpleMessage("Obnovit"),
         "recoveryKeyVerified":
             MessageLookupByLibrary.simpleMessage("Obnovovací klíč byl ověřen"),
@@ -414,7 +416,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Přejmenovat album"),
         "renameFile":
             MessageLookupByLibrary.simpleMessage("Přejmenovat soubor"),
-        "renewsOn": m74,
+        "renewsOn": m75,
         "reportABug": MessageLookupByLibrary.simpleMessage("Nahlásit chybu"),
         "reportBug": MessageLookupByLibrary.simpleMessage("Nahlásit chybu"),
         "resendEmail":
@@ -456,7 +458,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "selectTime": MessageLookupByLibrary.simpleMessage("Vybrat čas"),
         "selectYourPlan":
             MessageLookupByLibrary.simpleMessage("Vyberte svůj plán"),
-        "selfiesWithThem": m80,
+        "selfiesWithThem": m82,
         "send": MessageLookupByLibrary.simpleMessage("Odeslat"),
         "sendEmail": MessageLookupByLibrary.simpleMessage("Odeslat e-mail"),
         "sendInvite": MessageLookupByLibrary.simpleMessage("Odeslat pozvánku"),
@@ -524,7 +526,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "usedSpace": MessageLookupByLibrary.simpleMessage("Využité místo"),
         "verify": MessageLookupByLibrary.simpleMessage("Ověřit"),
         "verifyEmail": MessageLookupByLibrary.simpleMessage("Ověřit e-mail"),
-        "verifyEmailID": m109,
+        "verifyEmailID": m111,
         "verifyIDLabel": MessageLookupByLibrary.simpleMessage("Ověřit"),
         "verifying": MessageLookupByLibrary.simpleMessage("Ověřování..."),
         "verifyingRecoveryKey": MessageLookupByLibrary.simpleMessage(
@@ -538,6 +540,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "weakStrength": MessageLookupByLibrary.simpleMessage("Slabé"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("Vítejte zpět!"),
         "whatsNew": MessageLookupByLibrary.simpleMessage("Co je nového"),
+        "wishThemAHappyBirthday": m115,
         "yearly": MessageLookupByLibrary.simpleMessage("Ročně"),
         "yes": MessageLookupByLibrary.simpleMessage("Ano"),
         "yesCancel": MessageLookupByLibrary.simpleMessage("Ano, zrušit"),
@@ -548,7 +551,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "yesRemove": MessageLookupByLibrary.simpleMessage("Ano, odstranit"),
         "yesRenew": MessageLookupByLibrary.simpleMessage("Ano, obnovit"),
         "you": MessageLookupByLibrary.simpleMessage("Vy"),
-        "youAndThem": m114,
+        "youAndThem": m117,
         "yourAccountHasBeenDeleted":
             MessageLookupByLibrary.simpleMessage("Váš účet byl smazán"),
         "yourMap": MessageLookupByLibrary.simpleMessage("Vaše mapa")

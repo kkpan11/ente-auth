@@ -10,11 +10,13 @@
  * is a needed for fast refresh to work.
  */
 
-import { getUserRecoveryKeyB64 } from "ente-accounts/services/recovery-key";
+import { getUserRecoveryKey } from "ente-accounts/services/recovery-key";
+import type { User } from "ente-accounts/services/user";
 import log from "ente-base/log";
 import type { Collection } from "ente-media/collection";
 import type { FamilyData } from "ente-new/photos/services/user-details";
-import type { User } from "ente-shared/user/types";
+import { createUncategorizedCollection } from "../../services/collection";
+import { PseudoCollectionID } from "../../services/collection-summary";
 
 /**
  * Ensure that the keys in local storage are not malformed by verifying that the
@@ -28,13 +30,27 @@ import type { User } from "ente-shared/user/types";
  */
 export const validateKey = async () => {
     try {
-        await getUserRecoveryKeyB64();
+        await getUserRecoveryKey();
         return true;
     } catch (e) {
         log.warn("Failed to validate key" /*, caller will logout */, e);
         return false;
     }
 };
+
+/**
+ * Return the {@link Collection} (from amongst {@link collections}) with the
+ * given {@link collectionSummaryID}. As a special case, if the given
+ * {@link collectionSummaryID} is the ID of the placeholder uncategorized
+ * collection, create a new uncategorized collection and then return it.
+ */
+export const findCollectionCreatingUncategorizedIfNeeded = async (
+    collections: Collection[],
+    collectionSummaryID: number,
+): Promise<Collection | undefined> =>
+    collectionSummaryID == PseudoCollectionID.uncategorizedPlaceholder
+        ? createUncategorizedCollection()
+        : collections.find(({ id }) => id == collectionSummaryID);
 
 export const constructUserIDToEmailMap = (
     user: User,

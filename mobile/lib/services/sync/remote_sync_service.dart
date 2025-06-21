@@ -26,11 +26,12 @@ import "package:photos/service_locator.dart";
 import 'package:photos/services/app_lifecycle_service.dart';
 import 'package:photos/services/collections_service.dart';
 import 'package:photos/services/ignored_files_service.dart';
+import "package:photos/services/language_service.dart";
 import 'package:photos/services/local_file_update_service.dart';
 import "package:photos/services/notification_service.dart";
-import "package:photos/services/preview_video_store.dart";
 import 'package:photos/services/sync/diff_fetcher.dart';
 import 'package:photos/services/sync/sync_service.dart';
+import "package:photos/services/video_preview_service.dart";
 import 'package:photos/utils/file_uploader.dart';
 import 'package:photos/utils/file_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -127,7 +128,10 @@ class RemoteSyncService {
       }
 
       fileDataService.syncFDStatus().then((_) {
-        PreviewVideoStore.instance.queueFiles();
+        if (!flagService.hasGrantedMLConsent) {
+          VideoPreviewService.instance
+              .queueFiles(); // Only in case ML is disabled. if ML is enabled the MLService will queue streaming when ML is done
+        }
       }).ignore();
       final filesToBeUploaded = await _getFilesToBeUploaded();
       final hasUploadedFiles = await _uploadFiles(filesToBeUploaded);
@@ -991,10 +995,11 @@ class RemoteSyncService {
           'creating notification for ${collection?.displayName} '
           'shared: $sharedFilesIDs, collected: $collectedFilesIDs files',
         );
+        final s = await LanguageService.s;
         // ignore: unawaited_futures
         NotificationService.instance.showNotification(
           collection!.displayName,
-          totalCount.toString() + " new 📸",
+          totalCount.toString() + s.newPhotosEmoji,
           channelID: "collection:" + collectionID.toString(),
           channelName: collection.displayName,
           payload: "ente://collection/?collectionID=" + collectionID.toString(),
