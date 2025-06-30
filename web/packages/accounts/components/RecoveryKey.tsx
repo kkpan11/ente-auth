@@ -14,12 +14,12 @@ import { errorDialogAttributes } from "ente-base/components/utils/dialog";
 import { useIsSmallWidth } from "ente-base/components/utils/hooks";
 import type { ModalVisibilityProps } from "ente-base/components/utils/modal";
 import log from "ente-base/log";
-import { downloadString } from "ente-base/utils/web";
+import { saveStringAsFile } from "ente-base/utils/web";
 import { t } from "i18next";
 import { useCallback, useEffect, useState } from "react";
 import {
-    getUserRecoveryKeyB64,
-    recoveryKeyB64ToMnemonic,
+    getUserRecoveryKey,
+    recoveryKeyToMnemonic,
 } from "../services/recovery-key";
 import { CodeBlock } from "./CodeBlock";
 
@@ -49,13 +49,13 @@ export const RecoveryKey: React.FC<RecoveryKeyProps> = ({
     useEffect(() => {
         if (!open) return;
 
-        void getRecoveryKeyMnemonic()
+        void getUserRecoveryKeyMnemonic()
             .then((key) => setRecoveryKey(key))
             .catch(handleLoadError);
     }, [open, handleLoadError]);
 
     const handleSaveClick = () => {
-        downloadRecoveryKeyMnemonic(recoveryKey!);
+        saveRecoveryKeyMnemonicAsFile(recoveryKey!);
         onClose();
     };
 
@@ -114,8 +114,8 @@ export const RecoveryKey: React.FC<RecoveryKeyProps> = ({
     );
 };
 
-const getRecoveryKeyMnemonic = async () =>
-    recoveryKeyB64ToMnemonic(await getUserRecoveryKeyB64());
+const getUserRecoveryKeyMnemonic = async () =>
+    recoveryKeyToMnemonic(await getUserRecoveryKey());
 
-const downloadRecoveryKeyMnemonic = (key: string) =>
-    downloadString(key, "ente-recovery-key.txt");
+const saveRecoveryKeyMnemonicAsFile = (key: string) =>
+    saveStringAsFile(key, "ente-recovery-key.txt");

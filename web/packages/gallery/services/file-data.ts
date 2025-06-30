@@ -1,4 +1,4 @@
-import { encryptBlobB64 } from "ente-base/crypto";
+import { encryptBlob } from "ente-base/crypto";
 import type { EncryptedBlobB64 } from "ente-base/crypto/types";
 import {
     authenticatedPublicAlbumsRequestHeaders,
@@ -10,7 +10,7 @@ import {
 import { apiURL } from "ente-base/origins";
 import type { EnteFile } from "ente-media/file";
 import { nullToUndefined } from "ente-utils/transform";
-import { z } from "zod";
+import { z } from "zod/v4";
 
 /**
  * [Note: File data APIs]
@@ -196,8 +196,8 @@ export interface UpdatedFileDataFileIDsPage {
     fileIDs: Set<number>;
     /**
      * The latest updatedAt (epoch microseconds) time obtained from remote in
-     * this batch of sync (from amongst all of the files in the batch, not just
-     * those that were filtered to be part of {@link fileIDs}).
+     * this batch being fetched (from amongst all of the files in the batch, not
+     * just those that were filtered to be part of {@link fileIDs}).
      */
     lastUpdatedAt: number;
 }
@@ -293,7 +293,7 @@ export const putFileData = async (
     data: Uint8Array,
     lastUpdatedAt: number,
 ) => {
-    const { encryptedData, decryptionHeader } = await encryptBlobB64(
+    const { encryptedData, decryptionHeader } = await encryptBlob(
         data,
         file.key,
     );

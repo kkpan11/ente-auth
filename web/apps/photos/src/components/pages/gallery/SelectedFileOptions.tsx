@@ -18,10 +18,9 @@ import type { Collection } from "ente-media/collection";
 import type { CollectionSelectorAttributes } from "ente-new/photos/components/CollectionSelector";
 import type { GalleryBarMode } from "ente-new/photos/components/gallery/reducer";
 import {
-    ALL_SECTION,
-    ARCHIVE_SECTION,
-    TRASH_SECTION,
-} from "ente-new/photos/services/collection";
+    PseudoCollectionID,
+    type CollectionSummary,
+} from "ente-new/photos/services/collection-summary";
 import { t } from "i18next";
 import { type CollectionOp } from "utils/collection";
 import { type FileOp } from "utils/file";
@@ -44,8 +43,6 @@ interface Props {
     clearSelection: () => void;
     barMode?: GalleryBarMode;
     activeCollectionID: number;
-    isFavoriteCollection: boolean;
-    isUncategorizedCollection: boolean;
     /**
      * TODO: Need to implement delete-equivalent from shared albums.
      *
@@ -67,7 +64,7 @@ interface Props {
      * Also note that that user cannot delete files that are not owned by the
      * user, even if they are in an album owned by the user.
      */
-    isIncomingSharedCollection: boolean;
+    activeCollectionSummary: CollectionSummary | undefined;
     isInSearchMode: boolean;
     selectedCollection: Collection;
     isInHiddenSection: boolean;
@@ -84,15 +81,22 @@ const SelectedFileOptions = ({
     clearSelection,
     barMode,
     activeCollectionID,
-    isFavoriteCollection,
-    isUncategorizedCollection,
-    isIncomingSharedCollection,
+    activeCollectionSummary,
     isInSearchMode,
     isInHiddenSection,
 }: Props) => {
     const { showMiniDialog } = useBaseContext();
 
     const peopleMode = barMode == "people";
+
+    const isFavoriteCollection =
+        !!activeCollectionSummary?.attributes.has("userFavorites");
+
+    const isUncategorizedCollection =
+        activeCollectionSummary?.type == "uncategorized";
+
+    const isSharedIncomingCollection =
+        !!activeCollectionSummary?.attributes.has("sharedIncoming");
 
     const addToCollection = () =>
         onOpenCollectionSelector({
@@ -252,7 +256,7 @@ const SelectedFileOptions = ({
                         </IconButton>
                     </Tooltip>
                 </>
-            ) : activeCollectionID === TRASH_SECTION ? (
+            ) : activeCollectionID == PseudoCollectionID.trash ? (
                 <>
                     <Tooltip title={t("restore")}>
                         <IconButton onClick={restoreHandler}>
@@ -283,7 +287,7 @@ const SelectedFileOptions = ({
                         </IconButton>
                     </Tooltip>
                 </>
-            ) : isIncomingSharedCollection ? (
+            ) : isSharedIncomingCollection ? (
                 <Tooltip title={t("download")}>
                     <IconButton onClick={handleFileOp("download")}>
                         <DownloadIcon />
@@ -316,7 +320,8 @@ const SelectedFileOptions = ({
                         </IconButton>
                     </Tooltip>
                     {!isFavoriteCollection &&
-                        activeCollectionID != ARCHIVE_SECTION && (
+                        activeCollectionID !=
+                            PseudoCollectionID.archiveItems && (
                             <Tooltip title={t("favorite")}>
                                 <IconButton onClick={handleFileOp("favorite")}>
                                     <FavoriteBorderIcon />
@@ -333,22 +338,22 @@ const SelectedFileOptions = ({
                             <AddIcon />
                         </IconButton>
                     </Tooltip>
-                    {activeCollectionID === ARCHIVE_SECTION && (
+                    {activeCollectionID == PseudoCollectionID.archiveItems && (
                         <Tooltip title={t("unarchive")}>
                             <IconButton onClick={handleFileOp("unarchive")}>
                                 <UnArchiveIcon />
                             </IconButton>
                         </Tooltip>
                     )}
-                    {activeCollectionID === ALL_SECTION && (
+                    {activeCollectionID === PseudoCollectionID.all && (
                         <Tooltip title={t("archive")}>
                             <IconButton onClick={handleFileOp("archive")}>
                                 <ArchiveIcon />
                             </IconButton>
                         </Tooltip>
                     )}
-                    {activeCollectionID !== ALL_SECTION &&
-                        activeCollectionID !== ARCHIVE_SECTION &&
+                    {activeCollectionID !== PseudoCollectionID.all &&
+                        activeCollectionID != PseudoCollectionID.archiveItems &&
                         !isFavoriteCollection && (
                             <>
                                 <Tooltip title={t("move")}>

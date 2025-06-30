@@ -20,13 +20,15 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'be';
 
-  static String m56(passwordStrengthValue) =>
+  static String m57(passwordStrengthValue) =>
       "Надзейнасць пароля: ${passwordStrengthValue}";
 
-  static String m91(storageAmountInGB) => "${storageAmountInGB} Гб";
+  static String m93(storageAmountInGB) => "${storageAmountInGB} Гб";
 
-  static String m112(email) =>
+  static String m114(email) =>
       "Ліст адпраўлены на электронную пошту <green>${email}</green>";
+
+  static String m115(name) => "Wish \$${name} a happy birthday! 🎉";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -111,6 +113,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Зрабіць гэта пазней"),
         "done": MessageLookupByLibrary.simpleMessage("Гатова"),
         "email": MessageLookupByLibrary.simpleMessage("Электронная пошта"),
+        "emailAlreadyRegistered": MessageLookupByLibrary.simpleMessage(
+            "Электронная пошта ўжо зарэгістравана."),
         "encryption": MessageLookupByLibrary.simpleMessage("Шыфраванне"),
         "encryptionKeys":
             MessageLookupByLibrary.simpleMessage("Ключы шыфравання"),
@@ -125,6 +129,8 @@ class MessageLookup extends MessageLookupByLibrary {
             "Увядзіце сапраўдны адрас электронная пошты."),
         "enterYourEmailAddress": MessageLookupByLibrary.simpleMessage(
             "Увядзіце свой адрас электроннай пошты"),
+        "enterYourNewEmailAddress": MessageLookupByLibrary.simpleMessage(
+            "Увядзіце ваш новы адрас электроннай пошты"),
         "enterYourPassword":
             MessageLookupByLibrary.simpleMessage("Увядзіце свой пароль"),
         "enterYourRecoveryKey": MessageLookupByLibrary.simpleMessage(
@@ -187,7 +193,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "password": MessageLookupByLibrary.simpleMessage("Пароль"),
         "passwordChangedSuccessfully":
             MessageLookupByLibrary.simpleMessage("Пароль паспяхова зменены"),
-        "passwordStrength": m56,
+        "passwordStrength": m57,
         "passwordWarning": MessageLookupByLibrary.simpleMessage(
             "Мы не захоўваем гэты пароль і <underline>мы не зможам расшыфраваць вашы даныя</underline>, калі вы забудзеце яго"),
         "photoSmallCase": MessageLookupByLibrary.simpleMessage("фота"),
@@ -249,7 +255,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Немагчыма згенерыраваць ключы бяспекі на гэтай прыладзе.\n\nЗарэгіструйцеся з іншай прылады."),
         "status": MessageLookupByLibrary.simpleMessage("Стан"),
-        "storageInGB": m91,
+        "storageInGB": m93,
         "strongStrength": MessageLookupByLibrary.simpleMessage("Надзейны"),
         "support": MessageLookupByLibrary.simpleMessage("Падтрымка"),
         "systemTheme": MessageLookupByLibrary.simpleMessage("Сістэма"),
@@ -288,9 +294,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "videoSmallCase": MessageLookupByLibrary.simpleMessage("відэа"),
         "viewLargeFiles": MessageLookupByLibrary.simpleMessage("Вялікія файлы"),
         "viewer": MessageLookupByLibrary.simpleMessage("Праглядальнік"),
-        "weHaveSendEmailTo": m112,
+        "weHaveSendEmailTo": m114,
         "weakStrength": MessageLookupByLibrary.simpleMessage("Ненадзейны"),
         "welcomeBack": MessageLookupByLibrary.simpleMessage("З вяртаннем!"),
+        "wishThemAHappyBirthday": m115,
         "yesDelete": MessageLookupByLibrary.simpleMessage("Так, выдаліць"),
         "yesLogout": MessageLookupByLibrary.simpleMessage("Так, выйсці"),
         "yesRemove": MessageLookupByLibrary.simpleMessage("Так, выдаліць"),

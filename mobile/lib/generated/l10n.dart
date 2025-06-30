@@ -11716,11 +11716,71 @@ class S {
     );
   }
 
-  /// `On this day`
-  String get onThisDay {
+  /// `Widgets`
+  String get widgets {
     return Intl.message(
-      'On this day',
-      name: 'onThisDay',
+      'Widgets',
+      name: 'widgets',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Memories`
+  String get memories {
+    return Intl.message(
+      'Memories',
+      name: 'memories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select the people you wish to see on your homescreen.`
+  String get peopleWidgetDesc {
+    return Intl.message(
+      'Select the people you wish to see on your homescreen.',
+      name: 'peopleWidgetDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select the albums you wish to see on your homescreen.`
+  String get albumsWidgetDesc {
+    return Intl.message(
+      'Select the albums you wish to see on your homescreen.',
+      name: 'albumsWidgetDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select the kind of memories you wish to see on your homescreen.`
+  String get memoriesWidgetDesc {
+    return Intl.message(
+      'Select the kind of memories you wish to see on your homescreen.',
+      name: 'memoriesWidgetDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Smart memories`
+  String get smartMemories {
+    return Intl.message(
+      'Smart memories',
+      name: 'smartMemories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Past years' memories`
+  String get pastYearsMemories {
+    return Intl.message(
+      'Past years\' memories',
+      name: 'pastYearsMemories',
       desc: '',
       args: [],
     );
@@ -11765,6 +11825,326 @@ class S {
       args: [],
     );
   }
+
+  /// `On this day memories`
+  String get onThisDayMemories {
+    return Intl.message(
+      'On this day memories',
+      name: 'onThisDayMemories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `On this day`
+  String get onThisDay {
+    return Intl.message(
+      'On this day',
+      name: 'onThisDay',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Look back on your memories 🌄`
+  String get lookBackOnYourMemories {
+    return Intl.message(
+      'Look back on your memories 🌄',
+      name: 'lookBackOnYourMemories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// ` new 📸`
+  String get newPhotosEmoji {
+    return Intl.message(
+      ' new 📸',
+      name: 'newPhotosEmoji',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sorry, we had to pause your backups`
+  String get sorryWeHadToPauseYourBackups {
+    return Intl.message(
+      'Sorry, we had to pause your backups',
+      name: 'sorryWeHadToPauseYourBackups',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to install our best version yet`
+  String get clickToInstallOurBestVersionYet {
+    return Intl.message(
+      'Click to install our best version yet',
+      name: 'clickToInstallOurBestVersionYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receive reminders about memories from this day in previous years.`
+  String get onThisDayNotificationExplanation {
+    return Intl.message(
+      'Receive reminders about memories from this day in previous years.',
+      name: 'onThisDayNotificationExplanation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a memories widget to your homescreen and come back here to customize.`
+  String get addMemoriesWidgetPrompt {
+    return Intl.message(
+      'Add a memories widget to your homescreen and come back here to customize.',
+      name: 'addMemoriesWidgetPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add an album widget to your homescreen and come back here to customize.`
+  String get addAlbumWidgetPrompt {
+    return Intl.message(
+      'Add an album widget to your homescreen and come back here to customize.',
+      name: 'addAlbumWidgetPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a people widget to your homescreen and come back here to customize.`
+  String get addPeopleWidgetPrompt {
+    return Intl.message(
+      'Add a people widget to your homescreen and come back here to customize.',
+      name: 'addPeopleWidgetPrompt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Birthday notifications`
+  String get birthdayNotifications {
+    return Intl.message(
+      'Birthday notifications',
+      name: 'birthdayNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Receive reminders when it's someone's birthday. Tapping on the notification will take you to photos of the birthday person.`
+  String get receiveRemindersOnBirthdays {
+    return Intl.message(
+      'Receive reminders when it\'s someone\'s birthday. Tapping on the notification will take you to photos of the birthday person.',
+      name: 'receiveRemindersOnBirthdays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Happy birthday! 🥳`
+  String get happyBirthday {
+    return Intl.message(
+      'Happy birthday! 🥳',
+      name: 'happyBirthday',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Birthdays`
+  String get birthdays {
+    return Intl.message(
+      'Birthdays',
+      name: 'birthdays',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Wish {name} a happy birthday! 🎉`
+  String wishThemAHappyBirthday(Object name) {
+    return Intl.message(
+      'Wish $name a happy birthday! 🎉',
+      name: 'wishThemAHappyBirthday',
+      desc: '',
+      args: [name],
+    );
+  }
+
+  /// `Are you sure you want to remove this face from this person?`
+  String get areYouSureRemoveThisFaceFromPerson {
+    return Intl.message(
+      'Are you sure you want to remove this face from this person?',
+      name: 'areYouSureRemoveThisFaceFromPerson',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other detected faces`
+  String get otherDetectedFaces {
+    return Intl.message(
+      'Other detected faces',
+      name: 'otherDetectedFaces',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are they `
+  String get areThey {
+    return Intl.message(
+      'Are they ',
+      name: 'areThey',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `?`
+  String get questionmark {
+    return Intl.message(
+      '?',
+      name: 'questionmark',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save as another person`
+  String get saveAsAnotherPerson {
+    return Intl.message(
+      'Save as another person',
+      name: 'saveAsAnotherPerson',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show less faces`
+  String get showLessFaces {
+    return Intl.message(
+      'Show less faces',
+      name: 'showLessFaces',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Show more faces`
+  String get showMoreFaces {
+    return Intl.message(
+      'Show more faces',
+      name: 'showMoreFaces',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ignore`
+  String get ignore {
+    return Intl.message(
+      'Ignore',
+      name: 'ignore',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Merge`
+  String get merge {
+    return Intl.message(
+      'Merge',
+      name: 'merge',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reset`
+  String get reset {
+    return Intl.message(
+      'Reset',
+      name: 'reset',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to ignore this person?`
+  String get areYouSureYouWantToIgnoreThisPerson {
+    return Intl.message(
+      'Are you sure you want to ignore this person?',
+      name: 'areYouSureYouWantToIgnoreThisPerson',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to ignore these persons?`
+  String get areYouSureYouWantToIgnoreThesePersons {
+    return Intl.message(
+      'Are you sure you want to ignore these persons?',
+      name: 'areYouSureYouWantToIgnoreThesePersons',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The person groups will not be displayed in the people section anymore. Photos will remain untouched.`
+  String get thePersonGroupsWillNotBeDisplayed {
+    return Intl.message(
+      'The person groups will not be displayed in the people section anymore. Photos will remain untouched.',
+      name: 'thePersonGroupsWillNotBeDisplayed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The person will not be displayed in the people section anymore. Photos will remain untouched.`
+  String get thePersonWillNotBeDisplayed {
+    return Intl.message(
+      'The person will not be displayed in the people section anymore. Photos will remain untouched.',
+      name: 'thePersonWillNotBeDisplayed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to merge them?`
+  String get areYouSureYouWantToMergeThem {
+    return Intl.message(
+      'Are you sure you want to merge them?',
+      name: 'areYouSureYouWantToMergeThem',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All unnamed groups will be merged into the selected person. This can still be undone from the suggestions history overview of the person.`
+  String get allUnnamedGroupsWillBeMergedIntoTheSelectedPerson {
+    return Intl.message(
+      'All unnamed groups will be merged into the selected person. This can still be undone from the suggestions history overview of the person.',
+      name: 'allUnnamedGroupsWillBeMergedIntoTheSelectedPerson',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yes, ignore`
+  String get yesIgnore {
+    return Intl.message(
+      'Yes, ignore',
+      name: 'yesIgnore',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -11795,6 +12175,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
       Locale.fromSubtags(languageCode: 'ja'),
       Locale.fromSubtags(languageCode: 'km'),
       Locale.fromSubtags(languageCode: 'ko'),
+      Locale.fromSubtags(languageCode: 'ku'),
       Locale.fromSubtags(languageCode: 'lt'),
       Locale.fromSubtags(languageCode: 'lv'),
       Locale.fromSubtags(languageCode: 'ml'),
@@ -11808,6 +12189,7 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
       Locale.fromSubtags(languageCode: 'ro'),
       Locale.fromSubtags(languageCode: 'ru'),
       Locale.fromSubtags(languageCode: 'sl'),
+      Locale.fromSubtags(languageCode: 'sr'),
       Locale.fromSubtags(languageCode: 'sv'),
       Locale.fromSubtags(languageCode: 'ta'),
       Locale.fromSubtags(languageCode: 'te'),
